@@ -1,0 +1,4 @@
+path=
+client.py
+server.py
+path=assets\
