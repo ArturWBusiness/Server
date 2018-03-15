@@ -1,5 +1,0 @@
-path=
-startup.py
-client.py
-server.py
-path=assets/
