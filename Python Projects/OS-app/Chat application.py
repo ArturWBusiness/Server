@@ -22,17 +22,23 @@ def boot():
 # app update all
 def update():
     download_path = ""
+    print("Downloading...")
     for line in request.urlopen(online_path + "UPDATE_FILES.txt").read().decode().split("\n"):
+        line = line.strip("\r")
         if "path=" in line:
             download_path = line.split("=")[1]
+            continue
+        if line == "":
+            continue
         try:
             get_file(download_path, line)
         except NameError:
             pass
-    pass
+    boot()
 
 
 def get_file(file_path, name):
+    print("requesting " + name)
     with open(name, "w") as file:
         pass
     with open(name, "a") as file:
