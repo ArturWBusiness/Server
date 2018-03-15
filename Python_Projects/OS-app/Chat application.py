@@ -9,7 +9,7 @@ for now I will only stay with this app.
 from urllib import request
 from os import system, getcwd
 
-online_path = "https://raw.githubusercontent.com/Eis3/Server/master/Python%20Projects/OS-app/"
+online_path = "https://raw.githubusercontent.com/Eis3/Server/master/Python_Projects/OS-app/"
 path = getcwd() + "\\"
 
 
