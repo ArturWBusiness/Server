@@ -3,3 +3,16 @@ startup.py
 client.py
 server.py
 path=assets/
+back_display.png
+client_display.png
+client_name.png
+client_settings.png
+group_chat_display.png
+group_chat_input.png
+private_chat_display.png
+private_chat_input.png
+server_background.png
+server_displayer.png
+server_name.png
+server_settings.png
+user_background.png
