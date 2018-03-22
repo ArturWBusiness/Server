@@ -32,6 +32,7 @@ def update():
             continue
         try:
             get_file(download_path, line)
+            print("Downloading files from " + download_path + " . " + line)
         except NameError:
             pass
     boot()
@@ -39,9 +40,9 @@ def update():
 
 def get_file(file_path, name):
     print("requesting " + name)
-    with open(name, "w") as file:
+    with open(file_path + name, "w") as file:
         pass
-    with open(name, "a") as file:
+    with open(file_path + name, "a") as file:
         for line in request.urlopen(online_path + file_path + name).read().decode().split("\n"):
             file.write(line)
 
