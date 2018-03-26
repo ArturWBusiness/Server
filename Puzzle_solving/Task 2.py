@@ -7,7 +7,8 @@ By starting with 1 and 2, the first 10 terms will be:
 By considering the terms in the Fibonacci sequence whose values do not exceed four million,
 find the sum of the even-valued terms.
 """
-# Try 1 (Success)
+# Try 1 (Success) 261 chars, 11 lines, answer instant
+
 numbers = [1, 2]
 total = 2  # 2 ^
 i = 2
@@ -19,3 +20,10 @@ while numbers[i-1] < 4000000:
         total += numbers[i]
     i += 1
 print("Total: " + str(total))
+
+# Try 2
+number = 0.5
+total = 0
+while number < 4000000:
+    number = number / (number * number + number)
+
