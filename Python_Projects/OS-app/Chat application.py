@@ -7,15 +7,17 @@ for now I will only stay with this app.
 """
 
 from urllib import request
-from os import system, getcwd
+import os
+from time import sleep
+import subprocess
 
-online_path = "https://raw.githubusercontent.com/Eis3/Server/master/Python_Projects/OS-app/"
-path = getcwd() + "\\"
+online_path = "https://raw.githubusercontent.com/Eis3/Server/master/Python_Projects/OS-app/"  # Should never change.
+path = os.getcwd() + "\\"
 
 
 # app boot
 def boot():
-    system("python startup.py")
+    os.system("python startup.py")
     exit()
 
 
@@ -32,19 +34,32 @@ def update():
             continue
         try:
             get_file(download_path, line)
-            print("Downloading files from " + download_path + " . " + line)
-        except NameError:
-            pass
+            print("Downloading files from '" + download_path + "/" + line)
+        except EnvironmentError:
+            print("Error")
     boot()
 
 
+# Function to obtain the file from the "cloud"
 def get_file(file_path, name):
-    print("requesting " + name)
-    with open(file_path + name, "w") as file:
+    # Checks if the directory exists.
+    if file_path == "":
         pass
-    with open(file_path + name, "a") as file:
-        for line in request.urlopen(online_path + file_path + name).read().decode().split("\n"):
-            file.write(line)
+    elif not os.path.exists(file_path):
+        os.makedirs(file_path)  # TODO: Allow for folders in folders
+    print("requesting " + name)
+    # Take care of .png's
+    if name[-4:] == ".png":
+        print("Downloading")
+        with open(file_path + name, "wb") as file:
+            file.write(request.urlopen(online_path + file_path + name).read())
+    # Files that are not images.
+    else:
+        with open(file_path + name, "w") as file:  # makes the files
+            pass
+        with open(file_path + name, "a") as file:  # prints into the file
+            for line in request.urlopen(online_path + file_path + name).read().decode().split("\n"):
+                file.write(line)
 
 
 try:

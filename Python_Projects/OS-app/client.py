@@ -1,2 +1,1 @@
-def config(args):
-    for
+import _thread as thread
