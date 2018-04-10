@@ -58,7 +58,7 @@ def get_file(file_path, name):
         with open(file_path + name, "w") as file:  # makes the files
             pass
         with open(file_path + name, "a") as file:  # prints into the file
-            for line in request.urlopen(online_path + file_path + name).read().decode().split("\n"):
+            for line in request.urlopen(online_path + file_path + name).read().decode():
                 file.write(line)
 
 
@@ -83,15 +83,18 @@ try:
         boot()
         exit()
     else:
-        input("You need to update! Click enter to continue...")
-        update()
+        user_respond = input("Your version is not up-to-date! We highly recomend that you update!\nClick enter to continue or type in \"noupdate\" to cancel the updating")
+        if user_respond == "noupdate":
+            boot()
+        else:
+            update()
         exit()
 # config.txt not found
 except FileNotFoundError:
     print("config.txt not found!")
     answer = str(input("Is this your first start up? YES/NO\n> ")).upper()
     if "N" in answer:
-        print("Please contact the support as the current version can't be obtained! It must be that the program is" +
+        print("Please contact the support as the current version can't be obtained!\nIt must be that the program is" +
               "simply not installed or that you have mistakenly deleted the file.")
         input("Press enter to close...")
     else:
