@@ -4,10 +4,3 @@ discord_link=https://discord.gg/wjtEdFV
 PASS=oauth:pehwjfwit1nvkdb1oqda4f5n8kjqyx
 # Get from https://twitchapps.com/tmi/
 
-BOT=eis3bot
-
-CHANNEL=eis3twitch
-
-OWNER=eis3twitch
-
-SERVER=irc.twitch.tv,6667

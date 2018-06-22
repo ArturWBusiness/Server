@@ -1,5 +1,13 @@
 # The only import you need!
 import socket
+import _thread as thread
+import urllib.request
+from time import sleep
+
+BOT = "eis3bot"
+CHANNEL = "eis3twitch"
+OWNER = "eis3twitch"
+SERVER, PORT = "irc.twitch.tv", 6667
 
 with open("settings.txt", "r") as f:
     for line in f:
@@ -9,29 +17,9 @@ with open("settings.txt", "r") as f:
         #     continue
         if line.startswith("#") or line == "\n":
             continue
-        if line.startswith("discord_link="):
-            line = line.strip("discord_link=").strip("\n")
-            discord_link = line
-            continue
         if line.startswith("PASS="):
             line = line.strip("PASS=").strip("\n")
             PASS = line
-            continue
-        if line.startswith("BOT="):
-            line = line.strip("BOT=").strip("\n")
-            BOT = line
-            continue
-        if line.startswith("CHANNEL="):
-            line = line.strip("CHANNEL=").strip("\n")
-            CHANNEL = line
-            continue
-        if line.startswith("OWNER="):
-            line = line.strip("OWNER=").strip("\n")
-            OWNER = line
-            continue
-        if line.startswith("SERVER="):
-            line = line.strip("SERVER").strip("\n")
-            SERVER, PORT = line.strip(",")
             continue
 # Functions
 
@@ -67,7 +55,7 @@ def join_chat():
         readbuffer_join = temp.pop()
         for line in temp:
             Loading = loading_completed(line)
-    sendMessage(s, "Chat room joined!")
+    # sendMessage(s, "Chat room joined!")
     print("Bot has joined " + CHANNEL + " Channel!")
 
 
@@ -95,6 +83,84 @@ def Console(line):
         return True
 
 
+class Bank:
+    def __init__(self, file):
+        global users_gold
+        users_gold = []
+        with open(file, "r+") as f:
+            for line in f.readlines():
+                if line == "" or line == "\n":
+                    continue
+                line = line.strip("\n")
+                user, points = line.split("=")
+                users_gold.append((user, points))
+
+
+def gold_give(user, amount):
+    worked=False
+    global users_gold
+    for index, item in enumerate(users_gold):
+        itemlist = list(item)
+        if itemlist[0] == user:
+            itemlist[1] = int(itemlist[1]) + int(amount)
+            worked=True
+        item = tuple(itemlist)
+        users_gold[index] = item
+
+def gold_give_admin(user, amount):
+    worked=False
+    global users_gold
+    for index, item in enumerate(users_gold):
+        itemlist = list(item)
+        if itemlist[0] == user:
+            itemlist[1] = int(itemlist[1]) + int(amount)
+            worked=True
+        item = tuple(itemlist)
+        users_gold[index] = item
+    if not worked:
+        sendMessage(s, "User not found")
+    else:
+        sendMessage(s, str(amount) + " gold given to " + user)
+
+def gold_giver():
+    global users_gold
+    while True:
+        print("waiting")
+        sleep(60)
+        content = urllib.request.FancyURLopener({}).open("https://tmi.twitch.tv/group/user/eis3twitch/chatters").read().decode()
+        temp = content.split('"moderators": [\n')[1].split('\n    ],\n    "staff": [],')[0]
+        users_list_mods = temp.replace(" ", "").replace('"', "").replace("\n", "").split(",")
+        temp = content.split('"viewers": [\n')[1].split('\n    ]\n  }\n}')[0]
+        users_list_users = temp.replace(" ", "").replace('"', "").replace("\n", "").split(",")
+        user_list = users_list_mods + users_list_users
+        print(user_list)
+        user_to_add = []
+        for user in user_list:
+            x = 0
+            userfound = False
+            for registered_user in users_gold:
+                if registered_user[0] == user:
+                    gold_give(user, 1)
+                    userfound = True
+                x = x + 1
+            if not userfound:
+                user_to_add.append(user)
+        with open("users_gold.txt", "a") as f:
+            for user in user_to_add:
+                users_gold.append((user, 0))
+                f.write(user + "=0\n")
+                print(users_gold)
+
+
+def get_gold(target_user):
+    for data in users_gold:
+        if data[0] == target_user:
+            sendMessage(s, target_user + " has " + str(data[1]) + " gold")
+            break
+
+bank = Bank("users_gold.txt")
+thread.start_new_thread(gold_giver, ())
+print("print going on")
 while True:
         try:
             readbuffer = s.recv(1024)
@@ -127,13 +193,25 @@ while True:
 ############################################################################
 
             if user == OWNER and "!stop" in message:
-                sendMessage(s, "Understand! Leaving the chat room!")
+                sendMessage(s, "Saving before closing...")
+                f = open("users_gold.txt", "w")
+                f.close()
+                with open("users_gold.txt", "a") as f:
+                    for user in users_gold:
+                        f.write(str(user[0]) + "=" + str(user[1] + "\n"))
+                print(users_gold)
+                input("Click enter to close! (Check if saved correctly)")
                 exit()
+
+
+            if user == OWNER and message.startswith("!give"):
+                #if message.split(" ")[1] == "all":
+                gold_give_admin(message.split(" ")[1], message.split(" ")[2])
             #if message.startswith("!private"):
             #    sendMessage(s, PMSG + "This is a private message send to the user")
             #    break
-            if message.startswith("!discord"):
-                sendMessage(s, "You can join our group discord here " + discord_link)
+            if message.startswith("!gold"):
+                thread.start_new_thread(get_gold, (user,))
                 break
 
 ############################################################################

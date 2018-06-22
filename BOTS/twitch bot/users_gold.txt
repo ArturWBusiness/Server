@@ -1,0 +1,14 @@
+eis3twitch=1001
+mikuia=1
+moobot=1
+nightbot=1
+streamelements=1
+bk123=0
+commanderroot=1
+electricallongboard=1
+electricalskateboard=1
+lanfusion=1
+nmarulo=1
+eis3bot=0
+arxit_e=1
+000doodlepain=0
