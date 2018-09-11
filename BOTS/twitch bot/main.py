@@ -200,7 +200,6 @@ while True:
                     for user in users_gold:
                         f.write(str(user[0]) + "=" + str(user[1] + "\n"))
                 print(users_gold)
-                input("Click enter to close! (Check if saved correctly)")
                 exit()
 
 
