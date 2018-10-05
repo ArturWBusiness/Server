@@ -7,12 +7,12 @@ import pygame
 from pygame.locals import *
 
 connection = socket.socket()
-connection.connect(("localhost", 64590))
-username = input("Username> ")
-password = input("Password> ")
-connection.send(("LOGIN " + username + "" + password).encode())
+connection.connect(("localhost", 24680))
+#username = input("Username> ")
+#password = input("Password> ")
+#connection.send(("LOGIN " + username + " " + password).encode())
 
-
+connection.send(("LOGIN Eis3 family10").encode())
 class Player:
 
     def __init__(self):

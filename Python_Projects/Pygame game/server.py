@@ -4,7 +4,7 @@ import socket
 
 # Socket set up
 
-SERVER_IP, SERVER_PORT = "localhost", 64590
+SERVER_IP, SERVER_PORT = "localhost", 24680
 server = socket.socket()
 server.bind((SERVER_IP, SERVER_PORT))
 server.listen(10)
@@ -12,20 +12,21 @@ server.listen(10)
 
 class Users:
     def __init__(self):
-        self.users = ()
+        self.users = []
 
     def load(self):
         with open("database.txt", "r") as f:
             for line in f:
-                try:
-                    line = line.split("{")[1].split("}")[0]
-                    user_id, username, password = line.split(",")
-                    self.users.append((user_id, username, password))
-                except:
-                    pass
-
+                line = line.split("{")[1].split("}")[0]
+                user_id, username, password = line.split(",")
+                self.users.append((user_id, username, password))
     def password(self, username):
-        pass
+        print(self.users)
+        for user in self.users:
+            print("Testing " + user[1] + " on " + username)
+            if username == user[1]:
+                print(user[2])
+                return user[2]
 
 
 class Player:
@@ -43,17 +44,18 @@ def connectionAuthorise(soc, address):
     print("USER> Requesting a login")
     soc.send("DATA.REQUEST LOGIN".encode())
     respond = soc.recv(1024).decode()
-    print("USER> Package Received")
-    try:
-        username = respond.split(" ")[1]
-        password = respond.split(" ")[2]
-        if users.password(username) == password:
-            print("Logging in...")
-            start_new_thread(connectionListener, (soc, address))
-            start_new_thread(connectionSender, (soc, address))
-            start_new_thread(connectionBrain, (soc, address))
-    except:
-        pass
+    print("USER> Package Received (" + respond + ")")
+
+    username = respond.split(" ")[1]
+    password = respond.split(" ")[2]
+    print("USER> Logged in with " + username + " " + password)
+    if users.password(username) == password:
+        print("Logging in...")
+        start_new_thread(connectionListener, (soc, address))
+        start_new_thread(connectionSender, (soc, address))
+        start_new_thread(connectionBrain, (soc, address))
+
+    print("Closing")
     exit_thread()
     print("test?")
 
