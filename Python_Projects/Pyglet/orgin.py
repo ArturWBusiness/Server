@@ -1,7 +1,7 @@
 from pyglet.gl import *
 from pyglet.window import key
 import math
-
+import time
 
 class Grass:
 
@@ -23,12 +23,12 @@ class Grass:
         size = 1
         X,Y,Z = x+size,y+size,z+size
 
-        self.batch.add(4,GL_QUADS,self.side,('v3f',(x,y,z, x,y,Z, x,Y,Z, x,Y,z, )),tex_cords)
-        self.batch.add(4,GL_QUADS,self.side,('v3f',(X,y,Z, X,y,z, X,Y,z, X,Y,Z, )),tex_cords)
-        self.batch.add(4,GL_QUADS,self.bottom,('v3f',(x,y,z, X,y,z, X,y,Z, x,y,Z, )),tex_cords)
+        #self.batch.add(4,GL_QUADS,self.side,('v3f',(x,y,z, x,y,Z, x,Y,Z, x,Y,z, )),tex_cords)
+        #self.batch.add(4,GL_QUADS,self.side,('v3f',(X,y,Z, X,y,z, X,Y,z, X,Y,Z, )),tex_cords)
+        #self.batch.add(4,GL_QUADS,self.bottom,('v3f',(x,y,z, X,y,z, X,y,Z, x,y,Z, )),tex_cords)
         self.batch.add(4,GL_QUADS,self.top,('v3f',(x,Y,Z, X,Y,Z, X,Y,z, x,Y,z, )),tex_cords)
-        self.batch.add(4,GL_QUADS,self.side,('v3f',(X,y,z, x,y,z, x,Y,z, X,Y,z, )),tex_cords)
-        self.batch.add(4,GL_QUADS,self.side,('v3f',(x,y,Z, X,y,Z, X,Y,Z, x,Y,Z, )),tex_cords)
+        #self.batch.add(4,GL_QUADS,self.side,('v3f',(X,y,z, x,y,z, x,Y,z, X,Y,z, )),tex_cords)
+        #self.batch.add(4,GL_QUADS,self.side,('v3f',(x,y,Z, X,y,Z, X,Y,Z, x,Y,Z, )),tex_cords)
 
 
     def draw(self): self.batch.draw()
@@ -44,7 +44,7 @@ class World:
         self.chunk = []
 
     def load(self):
-        with open("chunk-0-0", "r") as f:
+        with open("flat-chunk-0-0", "r") as f:
             y_line = []
             for y, y_layer in enumerate(f):
                 y_layer = y_layer.strip("\n")
@@ -59,14 +59,24 @@ class World:
                     x_line.append(z_line)
                 y_line.append(x_line)
             self.chunk = y_line
+        self.update(0,0)
 
     def render(self):
+        #time.sleep(0)
         for y, y_layer in enumerate(self.chunk):
             for x, x_layer in enumerate(y_layer):
                 for z, block in enumerate(x_layer):
                     self.chunk[y][x][z].draw()
 
+    def update(self, chunk_x=0, chunk_z=0):
+        pass
+
     def check_block(self, check_x , check_z, check_y):
+        if check_x<0:
+            check_x-=1.0
+        if check_z<0:
+            check_z-=1.0
+        check_x, check_z = int(check_x), int(check_z)
         for y, y_layer in enumerate(self.chunk):
             for x, x_layer in enumerate(y_layer):
                 for z, block in enumerate(x_layer):
@@ -87,6 +97,7 @@ class Player:
         self.world = import_world
         self.velocity = 0
         self.holding = False
+        self.boost = 1
 
     def mouse_motion(self,dx,dy):
         dx/=8; dy/=8; self.rot[0]+=dy; self.rot[1]-=dx
@@ -94,26 +105,27 @@ class Player:
         elif self.rot[0]<-90: self.rot[0] = -90
 
     def update(self,dt,keys):
-        print(int(self.pos[0]),int(self.pos[2]),int(self.pos[1]))
+        #print(int(self.pos[0]),int(self.pos[2]),int(self.pos[1]))
         s = dt*5
-        gravity = 0.02
-        if self.world.check_block(int(self.pos[2]),int(self.pos[0]),int(self.pos[1])-1):
+        #print(s)
+        gravity = 0.1
+        if self.world.check_block(self.pos[2],self.pos[0],int(self.pos[1])-2):
             self.velocity = 0
         else:
             self.velocity -= gravity
         rotY = -self.rot[1]/180*math.pi
         dx,dz = s*math.sin(rotY),s*math.cos(rotY)
-        if keys[key.W]: self.pos[0]+=dx; self.pos[2]-=dz
-        if keys[key.S]: self.pos[0]-=dx; self.pos[2]+=dz
-        if keys[key.A]: self.pos[0]-=dz; self.pos[2]-=dx
-        if keys[key.D]: self.pos[0]+=dz; self.pos[2]+=dx
+        if keys[key.R]: self.boost = 1.75
+        else: self.boost = 1
+        if keys[key.W]: self.pos[0]+=dx*self.boost; self.pos[2]-=dz*self.boost
+        if keys[key.S]: self.pos[0]-=dx*self.boost; self.pos[2]+=dz*self.boost
+        if keys[key.A]: self.pos[0]-=dz*self.boost; self.pos[2]-=dx*self.boost
+        if keys[key.D]: self.pos[0]+=dz*self.boost; self.pos[2]+=dx*self.boost
 
         if keys[key.SPACE]:
-            if self.world.check_block(int(self.pos[2]), int(self.pos[0]), int(self.pos[1]) - 1):
+            if self.world.check_block(int(self.pos[2]), int(self.pos[0]), int(self.pos[1]) - 2):
                 self.velocity = 2
-        elif not keys[key.SPACE]:
-            self.holding = False
-        if keys[key.LSHIFT]: self.pos[0]=0.5;self.pos[2]=0.5;self.pos[1]=4;self.velocity=1
+        if keys[key.LSHIFT]: self.pos[0]=0.5;self.pos[2]=0.5;self.pos[1]=10;self.velocity=1
 
         self.pos[1] += s*self.velocity
 
@@ -137,7 +149,7 @@ class Window(pyglet.window.Window):
         self.world = World()
         self.world.load()
         #self.model = Grass(0, 0, -1)
-        self.player = Player(self.world, (0.5,4,0.5),(-30,0))
+        self.player = Player(self.world, (5.5,10,5.5),(-30,0))
 
     def on_mouse_motion(self,x,y,dx,dy):
         if self.mouse_lock: self.player.mouse_motion(dx,dy)
