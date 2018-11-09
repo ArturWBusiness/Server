@@ -1,4 +1,4 @@
-package com.arturwagner;
+package com.arturwagner.game2d;
 
 // Based on RealTutsGML tutorial
 // Tutorial followed by Artur Wagner

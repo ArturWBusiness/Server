@@ -1,4 +1,4 @@
-package com.arturwagner;
+package com.arturwagner.game2d;
 
 import java.awt.Graphics;
 

@@ -1,4 +1,4 @@
-package com.arturwagner;
+package com.arturwagner.testing;
 
 
 public class Testing_F {
