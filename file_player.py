@@ -70,7 +70,7 @@ def keyboard():
                 arrow = ["<---"] + [""] * 23
                 line_selected = 0
             except:
-                print("FUCK\n"*100)
+                print("No folder found!\n"*100)
         elif key == 224:  # Special keys (arrows, f keys, ins, del, etc.)
             key = ord(getch())
             if key == 72:  # Up arrow
