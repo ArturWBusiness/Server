@@ -60,7 +60,7 @@ def runPyGame():
     pygame.init()
 
     # Set up the clock. This will tick every frame and thus maintain a relatively constant framerate. Hopefully.
-    fps = 30.0
+    fps = 1000.0
     fpsClock = pygame.time.Clock()
 
     # Set up the window.
