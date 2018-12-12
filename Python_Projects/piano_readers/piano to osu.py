@@ -5,6 +5,8 @@ import pygame
 import pygame.midi
 from pygame.locals import *
 # display a list of MIDI devices connected to the computer
+
+
 def print_device_info():
     for i in range( pygame.midi.get_count() ):
         r = pygame.midi.get_device_info(i)
@@ -16,25 +18,29 @@ def print_device_info():
             in_out = "(output)"
         print ("%2i: interface: %s, name: %s, opened: %s %s" %
                (i, interf, name, opened, in_out))
+
+
 pygame.init()
 pygame.fastevent.init()
 event_get = pygame.fastevent.get
 event_post = pygame.fastevent.post
 pygame.midi.init()
-print ("Available MIDI devices:")
-print_device_info();
+print("Available MIDI devices:")
+print_device_info()
 # Change this to override use of default input device
 device_id = None
 if device_id is None:
     input_id = pygame.midi.get_default_input_id()
 else:
     input_id = device_id
-print ("Using input_id: %s" % input_id)
-i = pygame.midi.Input( input_id )
-print ("Logging started:")
+print("Using input_id: %s" % input_id)
+i = pygame.midi.Input(input_id)
+print("Logging started:")
 
 from pynput.keyboard import Key, Controller
 keyboard = Controller()
+
+
 def myf(key,press):
     if key == 50:
         letter = "a"
@@ -62,8 +68,6 @@ def myf(key,press):
         keyboard.release(letter)
     
 
-
-
 going = True
 while going:
     events = event_get()
@@ -81,4 +85,5 @@ while going:
         midi_events = i.read(10)
         midi_evs = pygame.midi.midis2events(midi_events, i.device_id)
         for m_e in midi_evs:
-            event_post( m_e )
+            event_post(m_e)
+
