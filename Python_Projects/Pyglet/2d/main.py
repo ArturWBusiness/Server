@@ -1,78 +1,132 @@
 import pyglet
 import random
+from time import sleep
 
-Width = 1024
-Height = 720
+Width = 1000
+Height = 200
 window = pyglet.window.Window(Width, Height)
 
-density = int(input("Amount of snow created per tick:  (Recommended 1-3)\n> "))
 
-snow_particles = []
+class Pointer:
+    def __init__(self):
+        self.acceleration = 0.0
+        self.velocity = 0.0
+        self.height = 0.0
 
-def create_snow(amount=1):
-    for i in range(0, amount):
-        particleX = random.randint(-50, Width + 50)
-        particleY = Height + 100
-        velocityY = random.randint(0, 10)
-        velocityX = random.randint(-3, 3)
-        snow_particle_object = pyglet.sprite.Sprite(img=pyglet.resource.image("snow.png"), x=particleX, y=particleY)
+    def __next_acceleration(self):
+        movement = 0
+        if self.velocity <= -5.0:
+            self.acceleration = self.acceleration*0.5 + 1
+        if self.velocity >= 5.0:
+            self.acceleration = self.acceleration*0.5 - 1
+        if self.height <= -10.0:
+            movement = random.random()*2      # Rand  0 to 2
+        elif self.height >= 10:
+            movement = random.random()*2 - 2  # Rand -2 to 0
+        else:
+            movement = random.random()*2 - 1  # Rand -1 to 1
 
-        snow_particles.append(
-            [
-                snow_particle_object,  # particleX, y=particleY),
-                (particleX, particleY),
-                (velocityX, velocityY)
-            ]
-        )
+        if self.acceleration >= 2 and movement >= 0:
+            movement = 0
+        elif self.acceleration <= -2 and movement <= 0:
+            movement = 0
+        self.acceleration += movement
+
+    def __next_velocity(self):
+        self.velocity += self.acceleration
+
+    def __next_height(self):
+        self.height += self.velocity
+
+    def next_point(self):
+        self.__next_acceleration()
+        self.__next_velocity()
+        self.__next_height()
+
+    def get_point(self):
+        return self.height
 
 
-xxx = 0
+class Graph:
+    def __init__(self):
+        self.size = 50
+        self.points = []
+        self.pointer = Pointer()
+
+    def clear(self):
+        self.points = []
+
+    def set_size(self, size):
+        self.size = size
+
+    def generate(self):
+        for x in range(0, self.size):
+            self.pointer.next_point()
+            y = self.pointer.get_point()
+            self.points.append((x, y))
+
+    def next_point(self):
+        self.points.pop(0)
+        temp_list = []
+        for point in self.points:
+            temp_list.append((point[0]-1, point[1]))
+        self.points = temp_list
+        self.pointer.next_point()
+        y = self.pointer.get_point()
+        self.points.append((self.size-1, y))
+
+    def get_points(self):
+        return self.points
+
+
+class Display:
+    def __init__(self):
+        self.graph = Graph()
+        self.color = (255, 255, 255)
+
+    def draw(self):
+        for point in self.graph.get_points():
+            draw_pixel(point, self.color)
+
+    def next_graph_point(self):
+        self.graph.next_point()
+
+    def new_graph(self, size):
+        self.graph.clear()
+        self.graph.set_size(size)
+        self.graph.generate()
+
+
+def draw_pixel(cord=(0, 0), color=(0, 0, 0)):
+    x = round(cord[0] * 5)
+    y = round(cord[1]) + int(Height/2)
+    pyglet.graphics.draw(1, pyglet.gl.GL_POINTS, ('v2i', (x, y)), ('c3B', (color[0], color[1], color[2])))
+
+
+displayable = []
+first_run = True
+
+
 def update(dt):
-    global xxx
-    if xxx % 10:
-        create_snow(density)
-        # snow_particle.update(y=random.randint(0, Height), x=random.randint(0, Width))
-    xxx += 1
-    back = 0
-    while "Delete" in snow_particles:
-        snow_particles.remove("Delete")
+    global first_run
+    sleep(1/60)
+    if first_run:
+        display = Display()
+        display.new_graph(200)
+        displayable.append(display)
+        first_run = False
+    if len(displayable) != 0:
+        for item in displayable:
+            item.next_graph_point()
     on_draw()
-
 
 
 def on_draw():
     window.clear()
-    #print(snow_particles)
-    for i, data in enumerate(snow_particles):
-        if data[1][1] < -50:
-            snow_particles[i] = "Delete"
-            continue
-        velocityY = data[2][1] + random.randint(-1, 1)
-        velocityX = data[2][0] + random.randint(-1, 1)
-        if velocityX < -3:
-            velocityX = -3
-        if velocityX > 3:
-            velocityX = 3
-        if velocityY < 1:
-            velocityY = 1
-        if velocityY > 10:
-            velocityY = 10
-        new_y = data[1][1] - velocityY
-        new_x = data[1][0] - velocityX
-        snow_particles[i][0].update(x=new_x, y=new_y)
-        snow_particles[i][1] = (new_x, new_y)
-        snow_particles[i][2] = (velocityX, velocityY)
-        snow_particles[i][0].draw()
-        # print("Particle at ", new_y, data[1])
+    if len(displayable) != 0:
+        for item in displayable:
+            item.draw()
 
-    print("Objects: " + str(len(snow_particles)))
 
 pyglet.clock.schedule_interval(update, 1/120)
 pyglet.app.run()
-"""
-
-
-1 2 5 6 7
-
-
-"""
