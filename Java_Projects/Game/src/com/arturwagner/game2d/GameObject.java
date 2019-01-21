@@ -32,6 +32,9 @@ public abstract class GameObject {
     public void setId(ID id){
         this.id = id;
     }
+    public ID getId() {
+        return id;
+    }
     public void setVelX(int velX){
         this.velX = velX;
     }

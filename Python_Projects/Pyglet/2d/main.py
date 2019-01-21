@@ -3,9 +3,17 @@ import random
 from time import sleep
 
 Width = 1000
-Height = 200
+Height = 500
 window = pyglet.window.Window(Width, Height)
+batch = pyglet.graphics.Batch()
+snow = pyglet.image.load("snow.png").texture
+x_offset = 5
+y_offset = 2
 
+
+velocity = 5.0
+height = 1
+accel = 50
 
 class Pointer:
     def __init__(self):
@@ -15,20 +23,20 @@ class Pointer:
 
     def __next_acceleration(self):
         movement = 0
-        if self.velocity <= -5.0:
+        if self.velocity <= -velocity:
             self.acceleration = self.acceleration*0.5 + 1
-        if self.velocity >= 5.0:
+        if self.velocity >= velocity:
             self.acceleration = self.acceleration*0.5 - 1
-        if self.height <= -10.0:
+        if self.height <= -height:
             movement = random.random()*2      # Rand  0 to 2
-        elif self.height >= 10:
+        elif self.height >= height:
             movement = random.random()*2 - 2  # Rand -2 to 0
         else:
             movement = random.random()*2 - 1  # Rand -1 to 1
 
-        if self.acceleration >= 2 and movement >= 0:
+        if self.acceleration >= accel and movement >= 0:
             movement = 0
-        elif self.acceleration <= -2 and movement <= 0:
+        elif self.acceleration <= -accel and movement <= 0:
             movement = 0
         self.acceleration += movement
 
@@ -52,9 +60,11 @@ class Graph:
         self.size = 50
         self.points = []
         self.pointer = Pointer()
+        self.objects = []
 
     def clear(self):
         self.points = []
+        self.objects = []
 
     def set_size(self, size):
         self.size = size
@@ -64,16 +74,22 @@ class Graph:
             self.pointer.next_point()
             y = self.pointer.get_point()
             self.points.append((x, y))
+            self.objects.append(pyglet.sprite.Sprite(snow, batch=batch, x=x*x_offset, y=y*y_offset+250))
 
     def next_point(self):
         self.points.pop(0)
+        self.objects.pop(0)
         temp_list = []
         for point in self.points:
             temp_list.append((point[0]-1, point[1]))
+        for obj in self.objects:
+            obj.x -= x_offset
         self.points = temp_list
         self.pointer.next_point()
         y = self.pointer.get_point()
         self.points.append((self.size-1, y))
+
+        self.objects.append(pyglet.sprite.Sprite(snow, batch=batch, x=self.size*x_offset-x_offset, y=y*y_offset+250))
 
     def get_points(self):
         return self.points
@@ -85,8 +101,9 @@ class Display:
         self.color = (255, 255, 255)
 
     def draw(self):
-        for point in self.graph.get_points():
-            draw_pixel(point, self.color)
+        #for point in self.graph.get_points():
+        #    draw_pixel(point, self.color)
+        batch.draw()
 
     def next_graph_point(self):
         self.graph.next_point()
@@ -109,7 +126,6 @@ first_run = True
 
 def update(dt):
     global first_run
-    sleep(1/60)
     if first_run:
         display = Display()
         display.new_graph(200)
