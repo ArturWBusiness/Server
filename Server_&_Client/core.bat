@@ -3,6 +3,6 @@ cls
 pause
 :loop
 cls
-python core.py
+python372 core.py
 pause
 goto loop

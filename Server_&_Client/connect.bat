@@ -3,6 +3,6 @@ cls
 pause
 :loop
 cls
-python connect.py
+python372 connect.py
 pause
 goto loop

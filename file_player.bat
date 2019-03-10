@@ -1,3 +1,3 @@
 @echo off
 clear
-python file_player.py
+python372 file_player.py
