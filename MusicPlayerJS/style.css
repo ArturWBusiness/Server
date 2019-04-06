@@ -1,0 +1,18 @@
+* {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.box {
+	display: flex;
+	flex-direction: column;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+}
+
+.item{
+	width: 25px;
+	height: 25px;
+	margin: 5px;
+}
