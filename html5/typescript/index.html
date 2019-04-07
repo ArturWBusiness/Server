@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Game</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        #wallpaper {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-image: url(bin/miku.jpg);
+            background-size: cover;
+            background-position: top center;
+            background-color: #FFF;
+            z-index: -1;
+        }
+
+        canvas {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 0;
+        }
+
+        #overlay {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        #overlay * {
+            position: relative;
+            pointer-events: none;
+        }
+
+        #overlay p {
+            font-size: 30px;
+            color: rgb(200, 10, 100);
+        }
+
+        #clock {
+            position: absolute;
+            color: rgba(160, 200, 255, 0.85);
+            text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
+            top: 0px;
+            bottom: 0px;
+            height: 400px;
+            width: 400px;
+            margin: auto;
+            left: 20%;
+            user-select: none;
+        }
+
+        #clock canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        #time {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        #time .time {
+            font-size: 75px;
+        }
+
+        #time .zone {
+            font-size: 30px;
+        }
+
+        #seconds {
+            position: relative;
+            margin-top: 5px;
+            font-size: 26px;
+        }
+
+        #date {
+            position: relative;
+            margin-top: 100px;
+            font-size: 26px;
+        }
+
+        @keyframes fadeout {
+            0% {
+                bottom: 0;
+            }
+
+            50% {
+                bottom: 0;
+            }
+
+            100% {
+                bottom: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wallpaper"></div>
+    <div id="overlay">
+        <div id="trademark">
+            <p style="
+				bottom: 100px;
+        		color: rgba(255, 100, 140, 0.6);
+        		-webkit-animation-name: fadeout;
+        		-webkit-animation-duration: 6s;
+        		animation-name: fadeout;
+        		animation-duration: 6s
+        		">Source: wallpaperscraft.com/wallpaper/vocaloid_hatsune_miku_woman_flower_planet_109799</p>
+        </div>
+        <div id="clock">
+            <canvas id="canvas-clock-outside"></canvas>
+            <canvas id="canvas-clock-inside"></canvas>
+            <div id="date">
+                date
+            </div>
+            <div id="time">
+                <span class="time">time</span> <span class="zone">zone</span>
+            </div>
+            <div id="seconds">
+                seconds
+            </div>
+        </div>
+    </div>
+    <canvas id="canvas">Sorry But It seems your browser doesn't support canvas</canvas>
+
+    <script type="text/javascript" src="bin/clock.js"></script>
+    <script type="text/javascript" src="bin/index.js"></script>
+</body>
+
+</html>
