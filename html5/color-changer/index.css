@@ -1,0 +1,41 @@
+body{
+    display: flex;
+    justify-content: center;
+}
+#red,#green,#blue{
+    -webkit-appearance: slider-vertical;
+    width: 20px;
+    height: 175px;
+    background-color: coral;
+}
+#controller{
+    display: flex;
+    flex-direction: column;
+    background-color: azure;
+    border-radius: 10px;
+    border: cadetblue 1px solid;
+    width: 300px;
+    justify-content: center;
+}
+#sliders, #informer{
+    display: flex;
+    flex-direction: row;
+}
+#sliders>input{
+    flex: 1;
+}
+#informer>div{
+    flex: 1;
+    text-align: center;
+}
+#box{
+    display: flex;
+    height: 300px;
+    width: 300px;
+    border-radius: 100%;
+    border: black solid 1px;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 42px;
+}
